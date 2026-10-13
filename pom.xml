@@ -25,6 +25,7 @@
       <groupId>io.cucumber</groupId>
       <artifactId>cucumber-java</artifactId>
       <version>${cucumber.version}</version>
+      <scope>test</scope>
     </dependency>
     <!-- JUnit 4 runner used by the *Runner classes -->
     <dependency>
@@ -44,6 +45,7 @@
       <groupId>org.seleniumhq.selenium</groupId>
       <artifactId>selenium-java</artifactId>
       <version>4.51.0</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 
