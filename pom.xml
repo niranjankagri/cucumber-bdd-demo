@@ -40,6 +40,19 @@
       <version>4.13.2</version>
       <scope>test</scope>
     </dependency>
+    <!-- JSON library (Jackson 2 + its jdk8 module) Cucumber needs to write its HTML and JSON reports -->
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>2.22.3</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-jdk8</artifactId>
+      <version>2.22.3</version>
+      <scope>test</scope>
+    </dependency>
     <!-- Browser automation; Selenium Manager downloads the matching driver itself -->
     <dependency>
       <groupId>org.seleniumhq.selenium</groupId>
