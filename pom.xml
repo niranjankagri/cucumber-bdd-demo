@@ -64,7 +64,7 @@
 
   <build>
     <plugins>
-      <!-- Runs every *Runner class (the default patterns would only pick up TestRunner) -->
+      <!-- Runs every *Runner class except the report demo (the default patterns would only pick up TestRunner) -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -73,6 +73,10 @@
           <includes>
             <include>**/*Runner.java</include>
           </includes>
+          <!-- Fails and skips on purpose; run it explicitly with -Dtest=ReportDemoRunner -->
+          <excludes>
+            <exclude>**/ReportDemoRunner.java</exclude>
+          </excludes>
         </configuration>
       </plugin>
     </plugins>
