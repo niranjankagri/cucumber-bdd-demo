@@ -1,24 +1,23 @@
 package com.niranjankagri.cucumberdemo.stepdefinitions;
 
-import java.time.Duration;
-
-import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
-import com.niranjankagri.cucumberdemo.utils.Config;
+import com.niranjankagri.cucumberdemo.pages.SauceDemoLoginPage;
 import com.niranjankagri.cucumberdemo.utils.DriverManager;
 
 /**
- * Steps of Example.feature: the Sauce Demo login, run once per row of its Examples
- * table (four demo users, each with the result the page must show).
+ * Steps of features/Example.feature: the Sauce Demo login, run once per row of its
+ * Examples table (four demo users, each with the result the page must show).
+ * Locators and page actions are in {@link SauceDemoLoginPage}.
  */
 public class ExampleStpDef {
+
+	// Page object of the Sauce Demo login; it uses the browser of the running scenario
+	private final SauceDemoLoginPage loginPage = new SauceDemoLoginPage();
 
 	/** Starts the browser from config.properties; the @After hook closes it. */
 	@Given("Open browser window")
@@ -26,10 +25,10 @@ public class ExampleStpDef {
 		DriverManager.start();
 	}
 
-	/** Opens the Sauce Demo login page (sauceDemoUrl). */
+	/** Opens the Sauce Demo login page. */
 	@When("Enter url of website")
 	public void enter_the_url_of_website() {
-		driver().get(Config.get("sauceDemoUrl"));
+		loginPage.open();
 	}
 
 	/**
@@ -38,35 +37,27 @@ public class ExampleStpDef {
 	 */
 	@When("User enter (.*) and (.*)$")
 	public void login_page(String uname, String pwd) {
-		DriverManager.waitFor(By.id("user-name")).sendKeys(uname);
-		DriverManager.waitFor(By.id("password")).sendKeys(pwd);
+		loginPage.enterCredentials(uname, pwd);
 	}
 
 	/** Submits the login form. */
 	@Then("click on login button")
 	public void click_on_login_button() {
-		DriverManager.waitFor(By.id("login-button")).click();
+		loginPage.clickLogin();
 	}
 
 	/**
-	 * Waits until the page contains the expected text: "Products" after a successful
-	 * login, the error message for a refused user. performance_glitch_user is slow on
-	 * purpose, hence the wait (waitSeconds from config.properties).
+	 * Checks that the page shows the expected text: "Products" after a successful login,
+	 * the error message for a refused user.
 	 */
 	@Then("the page shows {string}")
 	public void the_page_shows(String expected) {
-		WebDriverWait wait = new WebDriverWait(driver(), Duration.ofSeconds(Long.parseLong(Config.get("waitSeconds"))));
 		try {
-			wait.until(d -> d.findElement(By.tagName("body")).getText().contains(expected));
+			loginPage.waitForText(expected);
 		} catch (TimeoutException e) {
 			// Report what the page shows instead, so the failure explains itself
 			throw new AssertionError("Expected the page to show \"" + expected + "\" but it shows:\n"
-					+ driver().findElement(By.tagName("body")).getText());
+					+ loginPage.pageText());
 		}
-	}
-
-	// The browser of the running scenario, shared with the other step classes
-	private WebDriver driver() {
-		return DriverManager.getDriver();
 	}
 }
