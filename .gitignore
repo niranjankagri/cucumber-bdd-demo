@@ -1,0 +1,13 @@
+# Maven output and test reports
+target/
+
+# Screenshots written by test runs
+screenshots/
+
+# IDE files (IntelliJ, Eclipse, VS Code)
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+.vscode/
