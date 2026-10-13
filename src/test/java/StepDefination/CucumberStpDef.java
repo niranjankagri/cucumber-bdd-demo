@@ -18,7 +18,7 @@ public class CucumberStpDef {
 
 	@When("Enter the url of website")
 	public void enter_the_url_of_website() {
-		driver().get("https://the-internet.herokuapp.com/");
+		driver().get(Config.get("practiceSiteUrl"));
 	}
 
 	@Then("Click on signin button")
@@ -28,12 +28,12 @@ public class CucumberStpDef {
 
 	@When("Enter Username")
 	public void enter_username() {
-		driver().findElement(By.id("username")).sendKeys("tomsmith");
+		driver().findElement(By.id("username")).sendKeys(Config.get("practiceUser"));
 	}
 
 	@When("Enter Password")
 	public void enter_password() {
-		driver().findElement(By.id("password")).sendKeys("SuperSecretPassword!");
+		driver().findElement(By.id("password")).sendKeys(Config.get("practicePassword"));
 	}
 
 	@Then("Click on Submit")

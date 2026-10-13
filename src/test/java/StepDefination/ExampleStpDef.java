@@ -20,7 +20,7 @@ public class ExampleStpDef {
 
 	@When("Enter url of website")
 	public void enter_the_url_of_website() {
-		driver().get("https://www.saucedemo.com/");
+		driver().get(Config.get("sauceDemoUrl"));
 	}
 
 	@When("User enter (.*) and (.*)$")
@@ -36,7 +36,7 @@ public class ExampleStpDef {
 
 	@Then("the page shows {string}")
 	public void the_page_shows(String expected) {
-		WebDriverWait wait = new WebDriverWait(driver(), Duration.ofSeconds(10));
+		WebDriverWait wait = new WebDriverWait(driver(), Duration.ofSeconds(Long.parseLong(Config.get("waitSeconds"))));
 		try {
 			wait.until(d -> d.findElement(By.tagName("body")).getText().contains(expected));
 		} catch (TimeoutException e) {
