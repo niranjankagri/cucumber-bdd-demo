@@ -32,31 +32,31 @@ public class CucumberStpDef {
 	/** Opens the login page through its link on the home page. */
 	@Then("Click on signin button")
 	public void click_on_signin_button() {
-		driver().findElement(By.linkText("Form Authentication")).click();
+		DriverManager.waitFor(By.linkText("Form Authentication")).click();
 	}
 
 	/** Types the test user (practiceUser). */
 	@When("Enter Username")
 	public void enter_username() {
-		driver().findElement(By.id("username")).sendKeys(Config.get("practiceUser"));
+		DriverManager.waitFor(By.id("username")).sendKeys(Config.get("practiceUser"));
 	}
 
 	/** Types the test password (practicePassword). */
 	@When("Enter Password")
 	public void enter_password() {
-		driver().findElement(By.id("password")).sendKeys(Config.get("practicePassword"));
+		DriverManager.waitFor(By.id("password")).sendKeys(Config.get("practicePassword"));
 	}
 
 	/** Submits the login form. */
 	@Then("Click on Submit")
 	public void click_on_submit() {
-		driver().findElement(By.cssSelector("button[type='submit']")).click();
+		DriverManager.waitFor(By.cssSelector("button[type='submit']")).click();
 	}
 
 	/** The login worked: success message shown and the browser is on /secure. */
 	@Then("The secure area is shown")
 	public void the_secure_area_is_shown() {
-		String message = driver().findElement(By.id("flash")).getText();
+		String message = DriverManager.waitFor(By.id("flash")).getText();
 		assertTrue("Unexpected message: " + message, message.contains("You logged into a secure area!"));
 		assertTrue("Not on the secure page: " + driver().getCurrentUrl(), driver().getCurrentUrl().endsWith("/secure"));
 	}

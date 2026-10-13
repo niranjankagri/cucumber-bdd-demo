@@ -1,12 +1,18 @@
 package StepDefination;
 
+import java.time.Duration;
+
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
  * Holds the browser of the running scenario, so every step class uses the same one.
@@ -75,6 +81,18 @@ public final class DriverManager {
 	 */
 	public static WebDriver getDriver() {
 		return DRIVER.get();
+	}
+
+	/**
+	 * Waits until the element is visible (up to waitSeconds from config.properties) and
+	 * returns it. Steps use this instead of findElement, so a slow page does not fail them.
+	 *
+	 * @param locator the element
+	 * @return WebElement the visible element
+	 */
+	public static WebElement waitFor(By locator) {
+		WebDriverWait wait = new WebDriverWait(getDriver(), Duration.ofSeconds(Long.parseLong(Config.get("waitSeconds"))));
+		return wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
 	}
 
 	/** Closes the browser, if one is open. */

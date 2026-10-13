@@ -35,14 +35,14 @@ public class ExampleStpDef {
 	 */
 	@When("User enter (.*) and (.*)$")
 	public void login_page(String uname, String pwd) {
-		driver().findElement(By.id("user-name")).sendKeys(uname);
-		driver().findElement(By.id("password")).sendKeys(pwd);
+		DriverManager.waitFor(By.id("user-name")).sendKeys(uname);
+		DriverManager.waitFor(By.id("password")).sendKeys(pwd);
 	}
 
 	/** Submits the login form. */
 	@Then("click on login button")
 	public void click_on_login_button() {
-		driver().findElement(By.id("login-button")).click();
+		DriverManager.waitFor(By.id("login-button")).click();
 	}
 
 	/**
