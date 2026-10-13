@@ -6,19 +6,19 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
 
 import org.junit.platform.suite.api.ConfigurationParameter;
 import org.junit.platform.suite.api.IncludeEngines;
-import org.junit.platform.suite.api.SelectFile;
+import org.junit.platform.suite.api.SelectClasspathResource;
 import org.junit.platform.suite.api.Suite;
 
 /**
  * JUnit Platform suite for ReportDemo.feature (one failure and one skip on purpose).
- * The Cucumber engine runs the selected feature file, with the step definitions and
+ * The Cucumber engine runs the feature file from src/test/resources/features, with the step definitions and
  * hooks from the glue package (StepDefination).
  * Report: target/cucumber-reports/report-demo.html (and .json); "pretty" prints each step.
  * Run alone: mvn test -Dtest=ReportDemoRunner (excluded from the normal mvn test)
  */
 @Suite
 @IncludeEngines("cucumber")
-@SelectFile("src/test/java/MavenProject/CucumberDemo/ReportDemo.feature")
+@SelectClasspathResource("features/ReportDemo.feature")
 @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "StepDefination")
 @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME,
 		value = "pretty, html:target/cucumber-reports/report-demo.html, json:target/cucumber-reports/report-demo.json")
