@@ -1,4 +1,4 @@
-package StepDefination;
+package com.niranjankagri.cucumberdemo.stepdefinitions;
 
 import org.opentest4j.TestAbortedException;
 

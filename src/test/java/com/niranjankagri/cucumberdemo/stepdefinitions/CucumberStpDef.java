@@ -1,4 +1,4 @@
-package StepDefination;
+package com.niranjankagri.cucumberdemo.stepdefinitions;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -8,6 +8,9 @@ import org.openqa.selenium.WebDriver;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+
+import com.niranjankagri.cucumberdemo.utils.Config;
+import com.niranjankagri.cucumberdemo.utils.DriverManager;
 
 /**
  * Steps of cucumber.feature: sign in on the-internet.herokuapp.com, a public practice

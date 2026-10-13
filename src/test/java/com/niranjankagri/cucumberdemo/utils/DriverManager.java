@@ -1,4 +1,4 @@
-package StepDefination;
+package com.niranjankagri.cucumberdemo.utils;
 
 import java.time.Duration;
 

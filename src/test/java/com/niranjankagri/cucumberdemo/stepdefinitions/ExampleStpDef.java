@@ -1,4 +1,4 @@
-package StepDefination;
+package com.niranjankagri.cucumberdemo.stepdefinitions;
 
 import java.time.Duration;
 
@@ -10,6 +10,9 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+
+import com.niranjankagri.cucumberdemo.utils.Config;
+import com.niranjankagri.cucumberdemo.utils.DriverManager;
 
 /**
  * Steps of Example.feature: the Sauce Demo login, run once per row of its Examples

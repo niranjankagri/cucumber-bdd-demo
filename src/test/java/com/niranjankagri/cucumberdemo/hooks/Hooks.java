@@ -1,4 +1,4 @@
-package StepDefination;
+package com.niranjankagri.cucumberdemo.hooks;
 
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -7,8 +7,10 @@ import org.openqa.selenium.WebDriver;
 import io.cucumber.java.After;
 import io.cucumber.java.Scenario;
 
+import com.niranjankagri.cucumberdemo.utils.DriverManager;
+
 /**
- * Cucumber hooks, found through the runners' glue ("StepDefination").
+ * Cucumber hooks, found through the runners' glue (this package is part of it).
  */
 public class Hooks {
 

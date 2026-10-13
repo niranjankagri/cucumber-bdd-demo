@@ -1,5 +1,5 @@
 # Login on the-internet.herokuapp.com, a public practice site (runner: TestRunner).
-# Steps: StepDefination/CucumberStpDef.java; URL and test user: src/test/resources/config.properties.
+# Steps: stepdefinitions/CucumberStpDef.java; URL and test user: src/test/resources/config.properties.
 Feature: Sign in to a practice website
 
   Scenario: Test Login Functionality

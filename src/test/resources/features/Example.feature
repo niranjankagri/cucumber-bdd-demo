@@ -1,5 +1,5 @@
 # Sauce Demo login, once per Examples row (runner: ExampleRunner).
-# Steps: StepDefination/ExampleStpDef.java. "result" is the text the page must show afterwards:
+# Steps: stepdefinitions/ExampleStpDef.java. "result" is the text the page must show afterwards:
 # the product page for users who can log in, the error message for the locked-out user.
 Feature: Sign in into Website
 

@@ -1,4 +1,4 @@
-package MavenProject.CucumberDemo;
+package com.niranjankagri.cucumberdemo.runners;
 
 import static io.cucumber.junit.platform.engine.Constants.ANSI_COLORS_DISABLED_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.GLUE_PROPERTY_NAME;
@@ -10,18 +10,18 @@ import org.junit.platform.suite.api.SelectClasspathResource;
 import org.junit.platform.suite.api.Suite;
 
 /**
- * JUnit Platform suite for ReportDemo.feature (one failure and one skip on purpose).
+ * JUnit Platform suite for Example.feature (Sauce Demo login outline, 4 users).
  * The Cucumber engine runs the feature file from src/test/resources/features, with the step definitions and
- * hooks from the glue package (StepDefination).
- * Report: target/cucumber-reports/report-demo.html (and .json); "pretty" prints each step.
- * Run alone: mvn test -Dtest=ReportDemoRunner (excluded from the normal mvn test)
+ * hooks from the glue packages (stepdefinitions, hooks).
+ * Report: target/cucumber-reports/sauce-demo-login.html (and .json); "pretty" prints each step.
+ * Run alone: mvn test -Dtest=ExampleRunner
  */
 @Suite
 @IncludeEngines("cucumber")
-@SelectClasspathResource("features/ReportDemo.feature")
-@ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "StepDefination")
+@SelectClasspathResource("features/Example.feature")
+@ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "com.niranjankagri.cucumberdemo.stepdefinitions, com.niranjankagri.cucumberdemo.hooks")
 @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME,
-		value = "pretty, html:target/cucumber-reports/report-demo.html, json:target/cucumber-reports/report-demo.json")
+		value = "pretty, html:target/cucumber-reports/sauce-demo-login.html, json:target/cucumber-reports/sauce-demo-login.json")
 @ConfigurationParameter(key = ANSI_COLORS_DISABLED_PROPERTY_NAME, value = "true")
-public class ReportDemoRunner {
+public class ExampleRunner {
 }
