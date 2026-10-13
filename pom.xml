@@ -26,6 +26,19 @@
     <cucumber.version>8.0.4</cucumber.version>
   </properties>
 
+  <!-- One JUnit 6 version for all JUnit modules (Cucumber 8's engine is built for JUnit 6) -->
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.junit</groupId>
+        <artifactId>junit-bom</artifactId>
+        <version>6.1.3</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <dependencies>
     <!-- Cucumber: one version for every module (the old pom mixed 1.2.5, 6.9.1 and 6.11.0) -->
     <dependency>
@@ -34,17 +47,24 @@
       <version>${cucumber.version}</version>
       <scope>test</scope>
     </dependency>
-    <!-- JUnit 4 runner used by the *Runner classes -->
+    <!-- Cucumber engine for the JUnit Platform; the *Runner classes are JUnit Platform suites.
+         (The JUnit 4 runner io.cucumber.junit.Cucumber is deprecated and marked for removal.) -->
     <dependency>
       <groupId>io.cucumber</groupId>
-      <artifactId>cucumber-junit</artifactId>
+      <artifactId>cucumber-junit-platform-engine</artifactId>
       <version>${cucumber.version}</version>
       <scope>test</scope>
     </dependency>
+    <!-- @Suite, @SelectFile, @ConfigurationParameter for the runners (version from the JUnit BOM) -->
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.13.2</version>
+      <groupId>org.junit.platform</groupId>
+      <artifactId>junit-platform-suite</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <!-- Assertions used in the step definitions -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
       <scope>test</scope>
     </dependency>
     <!-- JSON library (Jackson 2 + its jdk8 module) Cucumber needs to write its HTML and JSON reports -->

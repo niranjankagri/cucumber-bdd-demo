@@ -1,6 +1,6 @@
 package StepDefination;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -57,8 +57,8 @@ public class CucumberStpDef {
 	@Then("The secure area is shown")
 	public void the_secure_area_is_shown() {
 		String message = DriverManager.waitFor(By.id("flash")).getText();
-		assertTrue("Unexpected message: " + message, message.contains("You logged into a secure area!"));
-		assertTrue("Not on the secure page: " + driver().getCurrentUrl(), driver().getCurrentUrl().endsWith("/secure"));
+		assertTrue(message.contains("You logged into a secure area!"), "Unexpected message: " + message);
+		assertTrue(driver().getCurrentUrl().endsWith("/secure"), "Not on the secure page: " + driver().getCurrentUrl());
 	}
 
 	// The browser of the running scenario, shared with the other step classes

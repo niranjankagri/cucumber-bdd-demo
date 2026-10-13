@@ -12,6 +12,6 @@ Feature: Report demo (a failure and a skip on purpose)
     Then Click on Submit
     And The secure area is shown
 
-  # The step throws AssumptionViolatedException, which marks the scenario as skipped
+  # The step throws TestAbortedException, which marks the scenario as skipped
   Scenario: Scenario skipped on purpose
     Given this scenario is skipped on purpose

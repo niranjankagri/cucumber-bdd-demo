@@ -2,7 +2,7 @@
 
 Cucumber + Selenium BDD project, first written in April 2022 while learning Cucumber, then
 upgraded step by step in October 2026 to Java 17, Cucumber 8 and Selenium 4 without changing
-its design: feature files → JUnit runners → step definitions. The commit history shows every step.
+its design: feature files → runners → step definitions. The commit history shows every step.
 
 - Two features: a login on a public practice site, and a Scenario Outline that logs in four
   Sauce Demo users and checks the result each one must get.
@@ -28,8 +28,8 @@ its design: feature files → JUnit runners → step definitions. The commit his
 | Part | Version |
 |---|---|
 | Java | 17 (tested on 27) |
-| Cucumber | 8.0.4 (cucumber-java, cucumber-junit) |
-| Runner | JUnit 4.13.2 via `@RunWith(Cucumber.class)` |
+| Cucumber | 8.0.4 (cucumber-java, cucumber-junit-platform-engine) |
+| Runner | JUnit Platform 6.1.3: each runner is a `@Suite` that runs one feature file with the Cucumber engine |
 | Selenium | 4.51.0 (Selenium Manager downloads the browser driver) |
 | Reports | Cucumber HTML + JSON (Jackson 2.22 for the JSON writer) |
 | Build | Maven, Surefire 3.5.6 |
@@ -68,8 +68,8 @@ mvn test
 Surefire runs every *Runner class (except ReportDemoRunner)
    |
    v
-TestRunner / ExampleRunner  (@RunWith(Cucumber.class), @CucumberOptions)
-   features = the .feature file    glue = StepDefination    plugin = pretty, html, json
+TestRunner / ExampleRunner  (JUnit Platform @Suite, @IncludeEngines("cucumber"))
+   @SelectFile = the .feature file    glue = StepDefination    plugin = pretty, html, json
    |
    v
 for each scenario (and for each Examples row of the outline):
@@ -85,7 +85,8 @@ target/cucumber-reports/<runner>.html and .json
 
 Step by step:
 
-1. **Runners.** Each JUnit runner names its feature file, the glue package and the report plugins.
+1. **Runners.** Each runner is a JUnit Platform suite: `@SelectFile` names its feature file, and
+   `@ConfigurationParameter`s set the glue package and the report plugins.
 2. **Features.** Gherkin scenarios; the outline runs once per row of its Examples table.
 3. **Step definitions.** Cucumber matches each step's text to a method in `StepDefination`
    (Cucumber expressions, and one regular expression for the outline's `User enter (.*) and (.*)$`).
@@ -179,7 +180,7 @@ make a run fail.
 ## Report demo: a failure and a skip on purpose
 
 `ReportDemo.feature` has one scenario that fails on purpose (the practice-site login without a
-password) and one that is skipped on purpose (`AssumptionViolatedException` with a reason). Its
+password) and one that is skipped on purpose (`TestAbortedException` with a reason). Its
 runner is excluded from `mvn test`, so the normal run stays green:
 
 ```
@@ -200,7 +201,7 @@ Each step is its own commit, checked with a run before it was pushed:
 | Step | Change |
 |---|---|
 | Build | Java 1.7 (rejected by current JDKs) → 17; Cucumber 8.0.4 only (the pom mixed 1.2.5, 6.9.1, 6.11.0, gherkin 3.2.0 and cucumber-jvm-deps); Selenium 3 → 4; Surefire runs every runner |
-| Runners | Used the old `cucumber.api.CucumberOptions`, which the Cucumber runner ignored, and feature paths with a dot instead of a slash |
+| Runners | Used the old `cucumber.api.CucumberOptions`, which the Cucumber runner ignored, and feature paths with a dot instead of a slash. Later moved from the JUnit 4 runner (deprecated, marked for removal in Cucumber 8) to JUnit Platform suites |
 | Driver | Hard-coded `D:\chromedriver_win32` path removed; Selenium Manager finds the driver |
 | Step definitions | Moved from `src/main/java` to `src/test/java` (same package) |
 | Amazon scenario | Replaced by the practice site (Amazon blocks automated logins); new last step checks the login worked |

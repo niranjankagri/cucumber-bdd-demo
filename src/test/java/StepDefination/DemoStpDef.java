@@ -1,6 +1,6 @@
 package StepDefination;
 
-import org.junit.AssumptionViolatedException;
+import org.opentest4j.TestAbortedException;
 
 import io.cucumber.java.en.Given;
 
@@ -10,11 +10,11 @@ import io.cucumber.java.en.Given;
 public class DemoStpDef {
 
 	/**
-	 * With the JUnit 4 runner, an AssumptionViolatedException marks the scenario as
-	 * skipped (not failed); its message is the reason shown in the report.
+	 * On the JUnit Platform, a TestAbortedException marks the scenario as skipped
+	 * (not failed); its message is the reason shown in the report.
 	 */
 	@Given("this scenario is skipped on purpose")
 	public void this_scenario_is_skipped_on_purpose() {
-		throw new AssumptionViolatedException("Skipped on purpose to show a skipped scenario in the report");
+		throw new TestAbortedException("Skipped on purpose to show a skipped scenario in the report");
 	}
 }
