@@ -1,9 +1,12 @@
 # Cucumber BDD Demo
 
 Cucumber + Selenium BDD project, first written in April 2022 while learning Cucumber, then
-upgraded step by step in October 2026 to Java 17, Cucumber 8 and Selenium 4 without changing
-its design: feature files → runners → step definitions. The commit history shows every step.
+upgraded step by step in October 2026 to Java 17, Cucumber 8 and Selenium 4, and then split into
+clear layers without changing its logic: runners → features → step definitions → page objects →
+browser and config helpers. The commit history shows every step.
 
+- Layered: runners, step definitions, page objects, hooks and utils in their own packages,
+  feature files and settings in `src/test/resources`.
 - Two features: a login on a public practice site, and a Scenario Outline that logs in four
   Sauce Demo users and checks the result each one must get.
 - Cucumber hooks: one browser per scenario, always closed, a screenshot attached on failure.
@@ -14,6 +17,7 @@ its design: feature files → runners → step definitions. The commit history s
 
 - [Stack](#stack)
 - [Project structure](#project-structure)
+- [The layers](#the-layers)
 - [How a run works](#how-a-run-works)
 - [The features](#the-features)
 - [Configuration](#configuration)
@@ -40,24 +44,45 @@ its design: feature files → runners → step definitions. The commit history s
 ```
 pom.xml
 src/test/resources/
-  config.properties              browser, headless, waitSeconds, site URLs, practice-site login
-src/test/java/
-  MavenProject/CucumberDemo/
-    cucumber.feature             practice-site login
-    Example.feature              Sauce Demo login outline (4 users + expected result)
-    ReportDemo.feature           a failure and a skip on purpose
-    TestRunner.java              runs cucumber.feature
-    ExampleRunner.java           runs Example.feature
-    ReportDemoRunner.java        runs ReportDemo.feature (excluded from mvn test)
-  StepDefination/                glue package of all runners
-    CucumberStpDef.java          steps of cucumber.feature
-    ExampleStpDef.java           steps of Example.feature
-    DemoStpDef.java              the "skipped on purpose" step
-    Hooks.java                   @After: screenshot on failure, close the browser
-    DriverManager.java           one browser per scenario, waitFor(By)
-    Config.java                  reads config.properties, applies -D overrides
-docs/images/                     report screenshots used below
+  config.properties                 browser, headless, waitSeconds, site URLs, practice-site login
+  features/
+    cucumber.feature                practice-site login
+    Example.feature                 Sauce Demo login outline (4 users + expected result)
+    ReportDemo.feature              a failure and a skip on purpose
+src/test/java/com/niranjankagri/cucumberdemo/
+  runners/
+    TestRunner.java                 runs features/cucumber.feature
+    ExampleRunner.java              runs features/Example.feature
+    ReportDemoRunner.java           runs features/ReportDemo.feature (excluded from mvn test)
+  stepdefinitions/                  glue: Java code behind the Gherkin steps (no locators)
+    CucumberStpDef.java             steps of cucumber.feature
+    ExampleStpDef.java              steps of Example.feature
+    DemoStpDef.java                 the "skipped on purpose" step
+  pages/                            page objects: locators + page actions
+    PracticeSitePage.java           the-internet.herokuapp.com: home, login form, secure area
+    SauceDemoLoginPage.java         saucedemo.com login and the text shown afterwards
+  hooks/                            glue: runs around every scenario
+    Hooks.java                      @After: screenshot on failure, close the browser
+  utils/                            helpers without Cucumber annotations
+    DriverManager.java              one browser per scenario: start, waitFor(By), quit
+    Config.java                     reads config.properties, applies -D overrides
+  (each package has a package-info.java describing its layer)
+docs/images/                        report screenshots used below
 ```
+
+## The layers
+
+| Layer | Package / folder | Job | Knows about |
+|---|---|---|---|
+| Runners | `runners` | pick a feature file, set glue and report plugins | features (by path) |
+| Features | `resources/features` | the scenarios in Gherkin | nothing (plain text) |
+| Step definitions | `stepdefinitions` | turn each Gherkin step into calls, hold the assertions | pages, utils |
+| Page objects | `pages` | locators and page actions, one class per page or site | utils |
+| Hooks | `hooks` | screenshot on failure, close the browser after each scenario | utils |
+| Utils | `utils` | the browser (DriverManager) and the settings (Config) | config.properties |
+
+A changed locator is fixed in one page class; a new scenario usually needs only Gherkin and, if
+it uses new steps, a few step methods that call existing page actions.
 
 ## How a run works
 
@@ -68,15 +93,16 @@ mvn test
 Surefire runs every *Runner class (except ReportDemoRunner)
    |
    v
-TestRunner / ExampleRunner  (JUnit Platform @Suite, @IncludeEngines("cucumber"))
-   @SelectFile = the .feature file    glue = StepDefination    plugin = pretty, html, json
+runners.TestRunner / runners.ExampleRunner  (JUnit Platform @Suite, @IncludeEngines("cucumber"))
+   @SelectClasspathResource = features/<name>.feature
+   glue = stepdefinitions, hooks       plugin = pretty, html, json
    |
    v
 for each scenario (and for each Examples row of the outline):
    Given Open (the) browser window  -> DriverManager.start(): browser from config.properties
-   When  Enter (the) url of website -> URL from config.properties
-   ... steps                        -> DriverManager.waitFor(By): wait until visible, then act
-   Then  last step                  -> JUnit assertion on the page
+   When  Enter (the) url of website -> page object opens the URL from config.properties
+   ... steps                        -> step definition -> page object -> DriverManager.waitFor(By)
+   Then  last step                  -> JUnit assertion in the step, on values from the page object
    @After (Hooks)                   -> failed? attach a screenshot; always close the browser
    |
    v
@@ -85,22 +111,26 @@ target/cucumber-reports/<runner>.html and .json
 
 Step by step:
 
-1. **Runners.** Each runner is a JUnit Platform suite: `@SelectFile` names its feature file, and
-   `@ConfigurationParameter`s set the glue package and the report plugins.
+1. **Runners.** Each runner is a JUnit Platform suite: `@SelectClasspathResource` names its feature
+   file in `src/test/resources/features`, and `@ConfigurationParameter`s set the glue (the
+   `stepdefinitions` and `hooks` packages) and the report plugins.
 2. **Features.** Gherkin scenarios; the outline runs once per row of its Examples table.
-3. **Step definitions.** Cucumber matches each step's text to a method in `StepDefination`
+3. **Step definitions.** Cucumber matches each step's text to a method in `stepdefinitions`
    (Cucumber expressions, and one regular expression for the outline's `User enter (.*) and (.*)$`).
-4. **Browser.** `DriverManager` keeps one browser per scenario (ThreadLocal) for all step classes,
+   The step methods hold no locators: they call the page objects.
+4. **Page objects.** `PracticeSitePage` and `SauceDemoLoginPage` hold the locators and the page
+   actions (open, type, click, read text).
+5. **Browser.** `DriverManager` keeps one browser per scenario (ThreadLocal) for all step classes,
    started by the "Open browser window" steps from `config.properties`.
-5. **Waits.** Every element lookup waits until the element is visible (`waitSeconds`), so a slow
+6. **Waits.** Every element lookup in the page objects waits until the element is visible (`waitSeconds`), so a slow
    page does not fail a step.
-6. **Assertions.** The last step of each scenario checks the outcome with JUnit asserts.
-7. **Hooks.** After every scenario: a screenshot is attached to the report if it failed, and the
+7. **Assertions.** The last step of each scenario checks the outcome with JUnit asserts.
+8. **Hooks.** After every scenario: a screenshot is attached to the report if it failed, and the
    browser is closed, also after a failure.
 
 ## The features
 
-**cucumber.feature** (TestRunner): sign in on the practice site with the test user its login page publishes.
+**features/cucumber.feature** (TestRunner): sign in on the practice site with the test user its login page publishes.
 
 ```gherkin
 Scenario: Test Login Functionality
@@ -113,7 +143,7 @@ Scenario: Test Login Functionality
   And The secure area is shown
 ```
 
-**Example.feature** (ExampleRunner): one login per Sauce Demo user, each with the text the page must show.
+**features/Example.feature** (ExampleRunner): one login per Sauce Demo user, each with the text the page must show.
 
 ```gherkin
 Scenario Outline: Check Login Functionality with multiple dataset
@@ -179,7 +209,7 @@ make a run fail.
 
 ## Report demo: a failure and a skip on purpose
 
-`ReportDemo.feature` has one scenario that fails on purpose (the practice-site login without a
+`features/ReportDemo.feature` has one scenario that fails on purpose (the practice-site login without a
 password) and one that is skipped on purpose (`TestAbortedException` with a reason). Its
 runner is excluded from `mvn test`, so the normal run stays green:
 
@@ -212,6 +242,8 @@ Each step is its own commit, checked with a run before it was pushed:
 | Reports | Cucumber HTML and JSON per runner |
 | Waits | Every element lookup waits until visible; a slow practice site used to fail the first step |
 | Docs | Comments in every class, runner, feature and config file; this README |
+| JUnit Platform | Runners moved from the deprecated JUnit 4 runner to JUnit Platform suites (JUnit 6) |
+| Layers | Feature files into `src/test/resources/features`; classes into `runners`, `stepdefinitions`, `hooks` and `utils` under `com.niranjankagri.cucumberdemo` (the 2022 packages were `MavenProject.CucumberDemo` and `StepDefination`); locators moved from the steps into `pages`; a `package-info.java` per layer |
 
 The original Amazon test email and password were replaced by placeholders before the first commit.
 
@@ -219,8 +251,8 @@ The original Amazon test email and password were replaced by placeholders before
 
 - **Live demo sites:** both sites are public and shared; slow answers can make a run flaky.
 - **Small scope:** two features and five scenarios; it is a learning project. A larger Cucumber
-  framework (page objects, PicoContainer, custom report, CI) is in
+  framework (PicoContainer, custom report, CI) is in
   [cucumber-java-framework](https://github.com/niranjankagri/cucumber-java-framework).
-- **Names from 2022 kept:** the package `StepDefination` and the class names `CucumberStpDef` /
-  `ExampleStpDef` keep their original spelling, so the flow and history stay easy to follow.
+- **Class names from 2022 kept:** `CucumberStpDef`, `ExampleStpDef`, `TestRunner` and `ExampleRunner`
+  keep their original names, so the flow and history stay easy to follow.
 - **No CI** for now: the tests run against public sites.
