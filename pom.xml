@@ -2,6 +2,8 @@
 
 <!--
   Maven build of the Cucumber + Selenium BDD demo.
+  Layout: features in src/test/resources/features, Java code in
+  src/test/java/com/niranjankagri/cucumberdemo (runners, stepdefinitions, pages, hooks, utils).
   mvn test                          runs TestRunner and ExampleRunner (5 scenarios)
   mvn test -Dtest=ReportDemoRunner  runs the report demo (fails and skips on purpose)
   Browser, headless mode and URLs come from src/test/resources/config.properties,
@@ -55,7 +57,7 @@
       <version>${cucumber.version}</version>
       <scope>test</scope>
     </dependency>
-    <!-- @Suite, @SelectFile, @ConfigurationParameter for the runners (version from the JUnit BOM) -->
+    <!-- @Suite, @SelectClasspathResource, @ConfigurationParameter for the runners (version from the JUnit BOM) -->
     <dependency>
       <groupId>org.junit.platform</groupId>
       <artifactId>junit-platform-suite</artifactId>
