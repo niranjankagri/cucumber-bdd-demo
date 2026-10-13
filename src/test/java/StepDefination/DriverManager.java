@@ -8,16 +8,27 @@ import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 
+/**
+ * Holds the browser of the running scenario, so every step class uses the same one.
+ * Started by the "Open (the) browser window" steps, closed by Hooks after each scenario.
+ */
 public final class DriverManager {
 
+	// One browser per thread, so scenarios could later run in parallel
 	private static final ThreadLocal<WebDriver> DRIVER = new ThreadLocal<>();
 
 	private DriverManager() {
 	}
 
+	/**
+	 * Starts the browser named in config.properties (browser, headless).
+	 *
+	 * @return WebDriver the started browser
+	 */
 	public static WebDriver start() {
 		boolean headless = Boolean.parseBoolean(Config.get("headless"));
 		WebDriver driver = create(Config.get("browser"), headless);
+		// A headless window already has its size; maximize() would shrink it
 		if (!headless) {
 			driver.manage().window().maximize();
 		}
@@ -25,6 +36,12 @@ public final class DriverManager {
 		return driver;
 	}
 
+	/**
+	 * Selenium Manager downloads the matching driver, so only the browser has to be installed.
+	 *
+	 * @param browser  chrome, firefox or edge
+	 * @param headless true to run without a window, at 1920x1080
+	 */
 	private static WebDriver create(String browser, boolean headless) {
 		switch (browser.toLowerCase()) {
 			case "firefox": {
@@ -53,10 +70,14 @@ public final class DriverManager {
 		}
 	}
 
+	/**
+	 * @return WebDriver the browser of this scenario, or null before "Open browser window"
+	 */
 	public static WebDriver getDriver() {
 		return DRIVER.get();
 	}
 
+	/** Closes the browser, if one is open. */
 	public static void quit() {
 		WebDriver driver = DRIVER.get();
 		if (driver != null) {

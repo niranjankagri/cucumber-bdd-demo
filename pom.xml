@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<!--
+  Maven build of the Cucumber + Selenium BDD demo.
+  mvn test                          runs TestRunner and ExampleRunner (5 scenarios)
+  mvn test -Dtest=ReportDemoRunner  runs the report demo (fails and skips on purpose)
+  Browser, headless mode and URLs come from src/test/resources/config.properties,
+  e.g. mvn test -Dbrowser=firefox -Dheadless=true
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
