@@ -14,7 +14,6 @@ public class ExampleStpDef {
 	
 	@Given("Open browser window")
 	public void open_the_browser_window(){
-	System.setProperty("webdriver.chrome.driver", "D:\\chromedriver_win32\\chromedriver.exe");
     
  	driver = new ChromeDriver();
  	
