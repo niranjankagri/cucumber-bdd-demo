@@ -23,6 +23,7 @@ public final class DriverManager {
 	// One browser per thread, so scenarios could later run in parallel
 	private static final ThreadLocal<WebDriver> DRIVER = new ThreadLocal<>();
 
+	// Only static access
 	private DriverManager() {
 	}
 

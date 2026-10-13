@@ -13,9 +13,15 @@ public final class Config {
 	// Loaded once, when a step first asks for a value
 	private static final Properties PROPS = load();
 
+	// Only static access
 	private Config() {
 	}
 
+	/**
+	 * Reads config.properties from the test classpath, then applies -D overrides.
+	 *
+	 * @return Properties the merged settings
+	 */
 	private static Properties load() {
 		Properties props = new Properties();
 		// Read from the test classpath, so it works from Maven and from the IDE
