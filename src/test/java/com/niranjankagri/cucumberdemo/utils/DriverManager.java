@@ -86,7 +86,7 @@ public final class DriverManager {
 
 	/**
 	 * Waits until the element is visible (up to waitSeconds from config.properties) and
-	 * returns it. Steps use this instead of findElement, so a slow page does not fail them.
+	 * returns it. Page objects use this instead of findElement, so a slow page does not fail a step.
 	 *
 	 * @param locator the element
 	 * @return WebElement the visible element
