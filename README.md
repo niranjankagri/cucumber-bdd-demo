@@ -255,4 +255,5 @@ The original Amazon test email and password were replaced by placeholders before
   [cucumber-java-framework](https://github.com/niranjankagri/cucumber-java-framework).
 - **Class names from 2022 kept:** `CucumberStpDef`, `ExampleStpDef`, `TestRunner` and `ExampleRunner`
   keep their original names, so the flow and history stay easy to follow.
-- **No CI** for now: the tests run against public sites.
+- **CI against live sites:** GitHub Actions runs the scenarios headless on every push and once a day
+  (`.github/workflows/tests.yml`); a red daily run can mean the site changed, not the code.
