@@ -260,6 +260,8 @@ The original Amazon test email and password were replaced by placeholders before
   and once a day (`.github/workflows/tests.yml`); a red daily run can mean the site changed, not the code.
   The JUnit XML is kept as the **junit-tests** artifact, which [Automation Coverage & Quality Intelligence](https://github.com/niranjankagri/automation-coverage-quality-intelligence)
   collects. `main` is protected by a ruleset: changes go through a pull request, and this job must pass first.
+  Dependabot proposes dependency and GitHub Actions updates once a month (minor and patch
+  grouped, major versions as separate pull requests).
 
 ## License
 
