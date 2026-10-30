@@ -2,7 +2,8 @@
 # Steps: stepdefinitions/CucumberStpDef.java; URL and test user: src/test/resources/config.properties.
 Feature: Sign in to a practice website
 
-  Scenario: Test Login Functionality
+  @TC-101
+  Scenario: [TC-101] Test Login Functionality
     Given Open the browser window
     When Enter the url of website
     Then Click on signin button
