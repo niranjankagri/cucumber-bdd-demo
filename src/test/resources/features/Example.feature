@@ -3,7 +3,8 @@
 # the product page for users who can log in, the error message for the locked-out user.
 Feature: Sign in into Website
 
-  Scenario Outline: Check Login Functionality with multiple dataset
+  @TC-102
+  Scenario Outline: [TC-102] Check Login Functionality with multiple dataset
     Given Open browser window
     When Enter url of website
     When User enter <username> and <password>

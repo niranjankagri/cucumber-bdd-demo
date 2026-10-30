@@ -131,10 +131,13 @@ Step by step:
 
 ## The features
 
+Every scenario carries its test case ID in its name and as a tag (`[TC-101]`, `@TC-101`); both cases are written out for a manual run in [docs/manual-test-cases.md](docs/manual-test-cases.md).
+
 **features/cucumber.feature** (TestRunner): sign in on the practice site with the test user its login page publishes.
 
 ```gherkin
-Scenario: Test Login Functionality
+@TC-101
+Scenario: [TC-101] Test Login Functionality
   Given Open the browser window
   When Enter the url of website
   Then Click on signin button
@@ -147,7 +150,8 @@ Scenario: Test Login Functionality
 **features/Example.feature** (ExampleRunner): one login per Sauce Demo user, each with the text the page must show.
 
 ```gherkin
-Scenario Outline: Check Login Functionality with multiple dataset
+@TC-102
+Scenario Outline: [TC-102] Check Login Functionality with multiple dataset
   Given Open browser window
   When Enter url of website
   When User enter <username> and <password>
