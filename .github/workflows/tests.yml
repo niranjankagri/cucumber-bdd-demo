@@ -1,5 +1,6 @@
-# Runs the suite headless in Chrome on every push and pull request to main, and once a day: the tests
-# use a public demo site, so the daily run also shows when the site changed. The JUnit XML is kept
+# Runs the suite headless in Chrome on every push and pull request to main, and once a day: TC-101 uses
+# a public practice site, so the daily run also shows when that site changed. TC-102 runs against
+# Pattern Shop (my own demo shop), started from its published image next to the tests. The JUnit XML is kept
 # as its own artifact for the CI results collection of automation-coverage-quality-intelligence.
 name: Tests
 
@@ -33,6 +34,13 @@ jobs:
           distribution: temurin
           java-version: '17'
           cache: maven
+
+      # A fresh shop for this job only (nothing shared, never down); the tests reach it on localhost:8080
+      - name: Start Pattern Shop
+        run: |
+          docker run -d --name shop -p 8080:8080 ghcr.io/niranjankagri/pattern-shop-demo-app:latest
+          for i in $(seq 1 30); do [ "$(curl -s localhost:8080/health)" = "ok" ] && exit 0; sleep 1; done
+          docker logs shop; exit 1
 
       # Chrome is preinstalled on the runner; Selenium Manager fetches the matching driver
       - name: Run the tests

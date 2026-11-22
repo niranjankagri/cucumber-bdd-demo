@@ -8,7 +8,8 @@ browser and config helpers. The commit history shows every step.
 - Layered: runners, step definitions, page objects, hooks and utils in their own packages,
   feature files and settings in `src/test/resources`.
 - Two features: a login on a public practice site, and a Scenario Outline that logs in four
-  Sauce Demo users and checks the result each one must get.
+  users of [Pattern Shop](https://github.com/niranjankagri/pattern-shop-demo-app) (my own demo shop) and checks the
+  result each one must get.
 - Cucumber hooks: one browser per scenario, always closed, a screenshot attached on failure.
 - Browser, headless mode, URLs and waits from `config.properties`, overridable with `-D`.
 - Cucumber HTML and JSON reports per runner, plus a report demo with a failure and a skip on purpose.
@@ -38,7 +39,7 @@ browser and config helpers. The commit history shows every step.
 | Selenium | 4.51.0 (Selenium Manager downloads the browser driver) |
 | Reports | Cucumber HTML + JSON (Jackson 2.22 for the JSON writer) |
 | Build | Maven, Surefire 3.5.6 |
-| Sites under test | [the-internet.herokuapp.com](https://the-internet.herokuapp.com) and [saucedemo.com](https://www.saucedemo.com) (public practice sites) |
+| Sites under test | [the-internet.herokuapp.com](https://the-internet.herokuapp.com) (public practice site) and [Pattern Shop](https://github.com/niranjankagri/pattern-shop-demo-app) (my own demo shop, run from its Docker image) |
 
 ## Project structure
 
@@ -48,7 +49,7 @@ src/test/resources/
   config.properties                 browser, headless, waitSeconds, site URLs, practice-site login
   features/
     cucumber.feature                practice-site login
-    Example.feature                 Sauce Demo login outline (4 users + expected result)
+    Example.feature                 Pattern Shop login outline (4 users + expected result)
     ReportDemo.feature              a failure and a skip on purpose
 src/test/java/com/niranjankagri/cucumberdemo/
   runners/
@@ -61,7 +62,7 @@ src/test/java/com/niranjankagri/cucumberdemo/
     DemoStpDef.java                 the "skipped on purpose" step
   pages/                            page objects: locators + page actions
     PracticeSitePage.java           the-internet.herokuapp.com: home, login form, secure area
-    SauceDemoLoginPage.java         saucedemo.com login and the text shown afterwards
+    ShopLoginPage.java              Pattern Shop sign-in and the text shown afterwards
   hooks/                            glue: runs around every scenario
     Hooks.java                      @After: screenshot on failure, close the browser
   utils/                            helpers without Cucumber annotations
@@ -119,7 +120,7 @@ Step by step:
 3. **Step definitions.** Cucumber matches each step's text to a method in `stepdefinitions`
    (Cucumber expressions, and one regular expression for the outline's `User enter (.*) and (.*)$`).
    The step methods hold no locators: they call the page objects.
-4. **Page objects.** `PracticeSitePage` and `SauceDemoLoginPage` hold the locators and the page
+4. **Page objects.** `PracticeSitePage` and `ShopLoginPage` hold the locators and the page
    actions (open, type, click, read text).
 5. **Browser.** `DriverManager` keeps one browser per scenario (ThreadLocal) for all step classes,
    started by the "Open browser window" steps from `config.properties`.
@@ -147,7 +148,7 @@ Scenario: [TC-101] Test Login Functionality
   And The secure area is shown
 ```
 
-**features/Example.feature** (ExampleRunner): one login per Sauce Demo user, each with the text the page must show.
+**features/Example.feature** (ExampleRunner): one login per Pattern Shop user, each with the text the page must show.
 
 ```gherkin
 @TC-102
@@ -159,11 +160,11 @@ Scenario Outline: [TC-102] Check Login Functionality with multiple dataset
   And the page shows "<result>"
 
   Examples:
-    | username                | password     | result                                              |
-    | standard_user           | secret_sauce | Products                                            |
-    | locked_out_user         | secret_sauce | Epic sadface: Sorry, this user has been locked out. |
-    | problem_user            | secret_sauce | Products                                            |
-    | performance_glitch_user | secret_sauce | Products                                            |
+    | username      | password     | result                         |
+    | standard_user | secret_sauce | Products                       |
+    | locked_user   | secret_sauce | This user has been locked out. |
+    | problem_user  | secret_sauce | Products                       |
+    | slow_user     | secret_sauce | Products                       |
 ```
 
 ## Configuration
@@ -177,17 +178,19 @@ waitSeconds = 10          # how long a step waits for an element or the expected
 practiceSiteUrl = https://the-internet.herokuapp.com/
 practiceUser = tomsmith   # the test user the practice site publishes (not a secret)
 practicePassword = SuperSecretPassword!
-sauceDemoUrl = https://www.saucedemo.com/
+shopUrl = http://localhost:8080/login   # Pattern Shop, see Setup and run
 ```
 
 Any key can be overridden for one run, e.g. `mvn test -Dbrowser=firefox -Dheadless=true`.
 
 ## Setup and run
 
-Requirements: Java 17+, Maven, and Chrome, Firefox or Edge. No driver download is needed:
+Requirements: Java 17+, Maven, Chrome, Firefox or Edge, and Docker for the shop. No driver download is needed:
 Selenium Manager fetches the matching driver on the first run.
 
 ```
+docker run -d -p 8080:8080 ghcr.io/niranjankagri/pattern-shop-demo-app:latest   # Pattern Shop on :8080
+
 mvn test                                  # both features, visible Chrome (5 scenarios)
 mvn test -Dheadless=true                  # headless Chrome
 mvn test -Dbrowser=edge -Dheadless=true   # Edge (also: firefox)
@@ -195,22 +198,23 @@ mvn test -Dtest=ExampleRunner             # one runner only
 ```
 
 Expected: `Tests run: 5, Failures: 0, Errors: 0, Skipped: 0`, checked on visible Chrome and on
-headless Chrome, Edge and Firefox. The sites are public demos, so a slow answer can occasionally
-make a run fail.
+headless Chrome, Edge and Firefox. Without Docker, the hosted shop works too
+(`-DshopUrl=https://pattern-shop.onrender.com/login`; it sleeps when idle, so the first run can take about a
+minute). The practice site is a public demo, so a slow answer can occasionally make TC-101 fail.
 
 ## Reports
 
 | Output | What it shows |
 |---|---|
 | `target/cucumber-reports/practice-site-login.html` | Cucumber report of TestRunner: every step with its duration, errors, attached screenshots |
-| `target/cucumber-reports/sauce-demo-login.html` | the same for ExampleRunner (one block per Examples row) |
+| `target/cucumber-reports/shop-login.html` | the same for ExampleRunner (one block per Examples row) |
 | `target/cucumber-reports/*.json` | the same results as JSON, for other report tools or CI |
 | console | "pretty" output of every step while the run goes |
 
 **Passing run** (ExampleRunner): the four users, each ending with the text the page had to show.
-`performance_glitch_user` is slow on purpose (5 s on the last step), which the wait handles:
+`slow_user` is slow on purpose (3 s on the login click), which the wait handles:
 
-![Cucumber report, Sauce Demo outline](docs/images/report-passing.png)
+![Cucumber report, Pattern Shop outline](docs/images/report-passing.png)
 
 ## Report demo: a failure and a skip on purpose
 
@@ -240,7 +244,7 @@ Each step is its own commit, checked with a run before it was pushed:
 | Driver | Hard-coded `D:\chromedriver_win32` path removed; Selenium Manager finds the driver |
 | Step definitions | Moved from `src/main/java` to `src/test/java` (same package) |
 | Amazon scenario | Replaced by the practice site (Amazon blocks automated logins); new last step checks the login worked |
-| Outline | Had no assertions (even the locked-out user "passed"); now each row states and checks its result |
+| Outline | Had no assertions (even the locked-out user "passed"); now each row states and checks its result. Moved from saucedemo.com to my own Pattern Shop in Nov 2026 (same four kinds of user: standard, locked, problem, slow) |
 | Hooks | One browser per scenario, always closed, screenshot on failure; before, browsers were left open |
 | Configuration | Browser, headless mode, URLs and waits in `config.properties`, with `-D` overrides |
 | Clean-up | Eclipse's unused feature template removed |
@@ -254,14 +258,16 @@ The original Amazon test email and password were replaced by placeholders before
 
 ## Known limitations
 
-- **Live demo sites:** both sites are public and shared; slow answers can make a run flaky.
+- **Live practice site:** the-internet.herokuapp.com is public and shared; slow answers can make TC-101 flaky.
+  TC-102 runs against a fresh Pattern Shop container in CI, so it does not depend on a public site.
 - **Small scope:** two features and five scenarios; it is a learning project. A larger Cucumber
   framework (PicoContainer, custom report, CI) is in
   [cucumber-java-framework](https://github.com/niranjankagri/cucumber-java-framework).
 - **Class names from 2022 kept:** `CucumberStpDef`, `ExampleStpDef`, `TestRunner` and `ExampleRunner`
   keep their original names, so the flow and history stay easy to follow.
-- **CI against live sites:** GitHub Actions runs the scenarios headless on every push, every pull request
-  and once a day (`.github/workflows/tests.yml`); a red daily run can mean the site changed, not the code.
+- **CI:** GitHub Actions starts Pattern Shop from its image, then runs the scenarios headless on every push,
+  every pull request and once a day (`.github/workflows/tests.yml`); a red daily run can mean the practice site
+  changed, not the code.
   The JUnit XML is kept as the **junit-tests** artifact, which [Automation Coverage & Quality Intelligence](https://github.com/niranjankagri/automation-coverage-quality-intelligence)
   collects. `main` is protected by a ruleset: changes go through a pull request, and this job must pass first.
   Dependabot proposes dependency and GitHub Actions updates once a month (minor and patch

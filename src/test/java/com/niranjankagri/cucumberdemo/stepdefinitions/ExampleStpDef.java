@@ -6,18 +6,18 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
-import com.niranjankagri.cucumberdemo.pages.SauceDemoLoginPage;
+import com.niranjankagri.cucumberdemo.pages.ShopLoginPage;
 import com.niranjankagri.cucumberdemo.utils.DriverManager;
 
 /**
- * Steps of features/Example.feature: the Sauce Demo login, run once per row of its
+ * Steps of features/Example.feature: the Pattern Shop login, run once per row of its
  * Examples table (four demo users, each with the result the page must show).
- * Locators and page actions are in {@link SauceDemoLoginPage}.
+ * Locators and page actions are in {@link ShopLoginPage}.
  */
 public class ExampleStpDef {
 
-	// Page object of the Sauce Demo login; it uses the browser of the running scenario
-	private final SauceDemoLoginPage loginPage = new SauceDemoLoginPage();
+	// Page object of the Pattern Shop sign-in; it uses the browser of the running scenario
+	private final ShopLoginPage loginPage = new ShopLoginPage();
 
 	/** Starts the browser from config.properties; the @After hook closes it. */
 	@Given("Open browser window")
@@ -25,7 +25,7 @@ public class ExampleStpDef {
 		DriverManager.start();
 	}
 
-	/** Opens the Sauce Demo login page. */
+	/** Opens the Pattern Shop sign-in page. */
 	@When("Enter url of website")
 	public void enter_the_url_of_website() {
 		loginPage.open();
