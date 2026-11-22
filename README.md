@@ -212,7 +212,7 @@ minute). The practice site is a public demo, so a slow answer can occasionally m
 | console | "pretty" output of every step while the run goes |
 
 **Passing run** (ExampleRunner): the four users, each ending with the text the page had to show.
-`slow_user` is slow on purpose (3 s on the login click), which the wait handles:
+`slow_user` is slow on purpose (3 s on the last step, while the shop signs it in), which the wait handles:
 
 ![Cucumber report, Pattern Shop outline](docs/images/report-passing.png)
 
