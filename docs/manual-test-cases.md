@@ -10,7 +10,8 @@ Not listed: `ReportDemo.feature`, which fails and skips on purpose to show the r
 ## Setup
 
 - TC-101: <https://the-internet.herokuapp.com/>, user `tomsmith`, password `SuperSecretPassword!`.
-- TC-102: <https://www.saucedemo.com/>, password `secret_sauce` for every user.
+- TC-102: Pattern Shop at <http://localhost:8080/login> (`docker run -d -p 8080:8080 ghcr.io/niranjankagri/pattern-shop-demo-app`)
+  or the hosted demo <https://pattern-shop.onrender.com/login>; password `secret_sauce` for every user.
   (Both from `src/test/resources/config.properties`.)
 
 ## Summary
@@ -18,7 +19,7 @@ Not listed: `ReportDemo.feature`, which fails and skips on purpose to show the r
 | ID | Title | Type | Priority | Feature file (runner) |
 |---|---|---|---|---|
 | TC-101 | Login on the practice site reaches the secure area | Smoke | High | `cucumber.feature` (`TestRunner`) |
-| TC-102 | Sauce Demo login with several users (4 data sets) | Regression | High | `Example.feature` (`ExampleRunner`, Scenario Outline) |
+| TC-102 | Pattern Shop login with several users (4 data sets) | Regression | High | `Example.feature` (`ExampleRunner`, Scenario Outline) |
 
 ---
 
@@ -30,14 +31,14 @@ Not listed: `ReportDemo.feature`, which fails and skips on purpose to show the r
 | 2 | Click **Form Authentication** | Login form |
 | 3 | Username `tomsmith`, password `SuperSecretPassword!`, click **Login** | Message "You logged into a secure area!"; URL ends with `/secure` |
 
-### TC-102 Sauce Demo login with several users
+### TC-102 Pattern Shop login with several users
 
-For every data set: open <https://www.saucedemo.com/>, enter the user and `secret_sauce`, click
-**Login**. Expected: the page shows the text in the last column.
+For every data set: open the shop's sign-in page, enter the user and `secret_sauce`, click
+**Sign in**. Expected: the page shows the text in the last column.
 
 | Data set | Username | Expected text |
 |---|---|---|
 | 1 | `standard_user` | Products |
-| 2 | `locked_out_user` | Epic sadface: Sorry, this user has been locked out. |
+| 2 | `locked_user` | This user has been locked out. |
 | 3 | `problem_user` | Products |
-| 4 | `performance_glitch_user` | Products (the page takes noticeably longer to open) |
+| 4 | `slow_user` | Products (the page takes about 3 seconds to open) |

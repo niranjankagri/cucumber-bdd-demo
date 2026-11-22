@@ -10,10 +10,10 @@ import org.junit.platform.suite.api.SelectClasspathResource;
 import org.junit.platform.suite.api.Suite;
 
 /**
- * JUnit Platform suite for Example.feature (Sauce Demo login outline, 4 users).
+ * JUnit Platform suite for Example.feature (Pattern Shop login outline, 4 users).
  * The Cucumber engine runs the feature file from src/test/resources/features, with the step definitions and
  * hooks from the glue packages (stepdefinitions, hooks).
- * Report: target/cucumber-reports/sauce-demo-login.html (and .json); "pretty" prints each step.
+ * Report: target/cucumber-reports/shop-login.html (and .json); "pretty" prints each step.
  * Run alone: mvn test -Dtest=ExampleRunner
  */
 @Suite
@@ -21,7 +21,7 @@ import org.junit.platform.suite.api.Suite;
 @SelectClasspathResource("features/Example.feature")
 @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "com.niranjankagri.cucumberdemo.stepdefinitions, com.niranjankagri.cucumberdemo.hooks")
 @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME,
-		value = "pretty, html:target/cucumber-reports/sauce-demo-login.html, json:target/cucumber-reports/sauce-demo-login.json")
+		value = "pretty, html:target/cucumber-reports/shop-login.html, json:target/cucumber-reports/shop-login.json")
 @ConfigurationParameter(key = ANSI_COLORS_DISABLED_PROPERTY_NAME, value = "true")
 public class ExampleRunner {
 }

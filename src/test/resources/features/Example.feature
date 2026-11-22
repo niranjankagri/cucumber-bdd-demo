@@ -1,6 +1,7 @@
-# Sauce Demo login, once per Examples row (runner: ExampleRunner).
+# Pattern Shop login, once per Examples row (runner: ExampleRunner).
 # Steps: stepdefinitions/ExampleStpDef.java. "result" is the text the page must show afterwards:
-# the product page for users who can log in, the error message for the locked-out user.
+# the product page for users who can log in, the error message for the locked user.
+# slow_user is signed in only after 3 seconds, on purpose: the wait in the last step handles it.
 Feature: Sign in into Website
 
   @TC-102
@@ -12,8 +13,8 @@ Feature: Sign in into Website
     And the page shows "<result>"
 
     Examples:
-      | username                | password     | result                                              |
-      | standard_user           | secret_sauce | Products                                            |
-      | locked_out_user         | secret_sauce | Epic sadface: Sorry, this user has been locked out. |
-      | problem_user            | secret_sauce | Products                                            |
-      | performance_glitch_user | secret_sauce | Products                                            |
+      | username      | password     | result                         |
+      | standard_user | secret_sauce | Products                       |
+      | locked_user   | secret_sauce | This user has been locked out. |
+      | problem_user  | secret_sauce | Products                       |
+      | slow_user     | secret_sauce | Products                       |
